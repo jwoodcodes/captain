@@ -43,52 +43,59 @@ export default function PlayerSelect({
   }
 
   async function onSearch(searchTerm, user) {
+    console.log("Search term:", searchTerm);
+    console.log("User:", user);
+
     const player = filteredPlayerData.find(
       (p) => p.name.toLowerCase() === searchTerm.toLowerCase()
     );
 
+    console.log("Found player:", player);
+
     if (player) {
-      const userObject = oCaptainLeagueDataArray.find(
-        (obj) => obj.user === user.username
-      );
+      try {
+        console.log("Sending request to /api/updateCaptain");
+        const response = await fetch("/api/updateCaptain", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: user.username,
+            week: week,
+            captainName: player.name,
+            position: player.position,
+          }),
+        });
 
-      if (userObject) {
-        userObject[`week${week}`] = player.name;
-        setCaptainDataState(userObject);
+        console.log("Response status:", response.status);
 
-        try {
-          const response = await fetch("/api/updateCaptain", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              username: user.username,
-              week: week,
-              captainName: player.name,
-              position: player.position,
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to update captain");
-          }
-
-          const data = await response.json();
-          console.log(data.message);
-
-          setPopoverMessage(`Captain for week ${week} set to ${player.name}`);
-          setShowPopover(true);
-          setTimeout(() => setShowPopover(false), 3000);
-        } catch (error) {
-          console.error("Error updating captain:", error);
-          setPopoverMessage("Failed to update captain. Please try again.");
-          setShowPopover(true);
-          setTimeout(() => setShowPopover(false), 3000);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to update captain: ${errorText}`);
         }
-        setTeamOneSearchValue("");
-        setShowDropdown(false);
+
+        const data = await response.json();
+        console.log("Response data:", data);
+
+        setCaptainDataState(data.updatedUser);
+
+        setPopoverMessage(`Captain for week ${week} set to ${player.name}`);
+        setShowPopover(true);
+        setTimeout(() => setShowPopover(false), 3000);
+      } catch (error) {
+        console.error("Error updating captain:", error);
+        setPopoverMessage(`Failed to update captain: ${error.message}`);
+        setShowPopover(true);
+        setTimeout(() => setShowPopover(false), 3000);
       }
+      setTeamOneSearchValue("");
+      setShowDropdown(false);
+    } else {
+      console.error("Player not found");
+      setPopoverMessage("Failed to update captain: Player not found");
+      setShowPopover(true);
+      setTimeout(() => setShowPopover(false), 3000);
     }
 
     setTeamOneSearchValue("");

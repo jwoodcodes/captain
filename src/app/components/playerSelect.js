@@ -116,6 +116,12 @@ export default function PlayerSelect({
           type="text"
           value={teamOneSearchValue}
           onChange={teamOneSearchOnChange}
+          onKeyPress={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              onSearch(teamOneSearchValue, user);
+            }
+          }}
           placeholder="Search for a player"
           className="mr-4 text-center p-2 rounded"
         />
@@ -127,7 +133,12 @@ export default function PlayerSelect({
         </button>
       </div>
       {showDropdown && (
-        <form>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            onSearch(teamOneSearchValue, user);
+          }}
+        >
           {filteredPlayerData
             .filter((player) => {
               if (player.name) {

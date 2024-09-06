@@ -46,6 +46,17 @@ export default function PlayerSelect({
     console.log("Search term:", searchTerm);
     console.log("User:", user);
 
+    // Check if the user is logged in
+    if (!user || !user.username) {
+      console.error("User not logged in");
+      setPopoverMessage("Please log in to set a captain");
+      setShowPopover(true);
+      setTimeout(() => setShowPopover(false), 3000);
+      setTeamOneSearchValue("");
+      setShowDropdown(false);
+      return; // Exit the function early
+    }
+
     const player = filteredPlayerData.find(
       (p) => p.name.toLowerCase() === searchTerm.toLowerCase()
     );
@@ -89,8 +100,6 @@ export default function PlayerSelect({
         setShowPopover(true);
         setTimeout(() => setShowPopover(false), 3000);
       }
-      setTeamOneSearchValue("");
-      setShowDropdown(false);
     } else {
       console.error("Player not found");
       setPopoverMessage("Failed to update captain: Player not found");
@@ -99,6 +108,7 @@ export default function PlayerSelect({
     }
 
     setTeamOneSearchValue("");
+    setShowDropdown(false);
   }
 
   const formatCaptainData = () => {

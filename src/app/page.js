@@ -20,3 +20,5 @@ export default function Home() {
     </main>
   );
 }
+
+// npm --max-old-space-size=8192 run dev

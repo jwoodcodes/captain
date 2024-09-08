@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import oCaptainLeagueDataArray from "../data/oCaptainLeagueDataArray";
 import styles from "../styles/extraStyles.module.css";
+import kickoffTimes from "../data/kickoffTimes";
 
 export default function PlayerSelect({
   initialSleeperPlayerData,
@@ -64,51 +65,89 @@ export default function PlayerSelect({
     console.log("Found player:", player);
 
     if (player) {
-      try {
-        console.log("Sending request to /api/updateCaptain");
-        const response = await fetch("/api/updateCaptain", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: user.username,
-            week: week,
-            captainName: player.name,
-            position: player.position,
-          }),
-        });
+      function compareDateAndTime(targetDate, targetTime) {
+        // Combine the target date and time
+        const [month, day, year] = targetDate.split("-");
+        const targetDateTime = new Date(
+          `${year}-${month}-${day}T${targetTime}:00`
+        );
 
-        console.log("Response status:", response.status);
+        // Get the current date and time
+        const currentDateTime = new Date();
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to update captain: ${errorText}`);
+        // Compare the two dates
+        if (currentDateTime < targetDateTime) {
+          return "before";
+        } else {
+          return "after";
         }
+      }
 
-        const data = await response.json();
-        console.log("Response data:", data);
+      let tryingToSetCaptainBeforeOrAfterKickoff = "before";
 
-        setCaptainDataState(data.updatedUser);
+      kickoffTimes.forEach((kickoffTime) => {
+        if (kickoffTime.team === player.team) {
+          let res = compareDateAndTime(kickoffTime.date, kickoffTime.kick);
+          console.log(res);
+          if (res === "after") {
+            tryingToSetCaptainBeforeOrAfterKickoff = "after";
+          }
+        }
+      });
 
-        setPopoverMessage(`Captain for week ${week} set to ${player.name}`);
-        setShowPopover(true);
-        setTimeout(() => setShowPopover(false), 3000);
-      } catch (error) {
-        console.error("Error updating captain:", error);
-        setPopoverMessage(`Failed to update captain: ${error.message}`);
+      if (tryingToSetCaptainBeforeOrAfterKickoff === "before") {
+        try {
+          console.log("Sending request to /api/updateCaptain");
+          const response = await fetch("/api/updateCaptain", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: user.username,
+              week: week,
+              captainName: player.name,
+              position: player.position,
+            }),
+          });
+
+          console.log("Response status:", response.status);
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to update captain: ${errorText}`);
+          }
+
+          const data = await response.json();
+          console.log("Response data:", data);
+
+          setCaptainDataState(data.updatedUser);
+
+          setPopoverMessage(`Captain for week ${week} set to ${player.name}`);
+          setShowPopover(true);
+          setTimeout(() => setShowPopover(false), 3000);
+        } catch (error) {
+          console.error("Error updating captain:", error);
+          setPopoverMessage(`Failed to update captain: ${error.message}`);
+          setShowPopover(true);
+          setTimeout(() => setShowPopover(false), 3000);
+        }
+      } else {
+        setPopoverMessage(
+          "Cannot set as captain, player's game has already begun"
+        );
         setShowPopover(true);
         setTimeout(() => setShowPopover(false), 3000);
       }
+
+      setTeamOneSearchValue("");
+      setShowDropdown(false);
     } else {
       console.error("Player not found");
       setPopoverMessage("Failed to update captain: Player not found");
       setShowPopover(true);
       setTimeout(() => setShowPopover(false), 3000);
     }
-
-    setTeamOneSearchValue("");
-    setShowDropdown(false);
   }
 
   const formatCaptainData = () => {

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import UserAuth from "./UserAuth";
 import PlayerSelect from "./playerSelect";
+import CurrentWeekDisplay from "./ShowWeeksCaptains";
 
 export default function AppContainer({
   initialSleeperPlayerData,
@@ -29,6 +30,7 @@ export default function AppContainer({
           week={week}
         />
       )}
+      <CurrentWeekDisplay />
     </div>
   );
 }

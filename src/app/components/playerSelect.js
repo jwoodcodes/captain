@@ -232,11 +232,13 @@ export default function PlayerSelect({
 
       {user && captainData && Object.keys(captainData).length > 0 && (
         <div className="mt-8">
-          <h2 className="text-xl font-bold mb-4">My Captain Selections</h2>
+          <h2 className="text-xl text-white text-center font-bold mb-4">
+            My Captain Selections
+          </h2>
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-blue-600 text-white">
-                <th className="p-2 text-left">Week</th>
+                <th className="p-2 text-left ">Week</th>
                 <th className="p-2 text-left">Player</th>
                 <th className="p-2 text-left">Position</th>
               </tr>
@@ -247,8 +249,12 @@ export default function PlayerSelect({
                   key={captain.weekNumber}
                   className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
                 >
-                  <td className="p-2 border-t">Week {captain.weekNumber}</td>
-                  <td className="p-2 border-t font-medium">{captain.player}</td>
+                  <td className="p-2 border-t text-white">
+                    Week {captain.weekNumber}
+                  </td>
+                  <td className="p-2 border-t font-medium text-white">
+                    {captain.week1.player}
+                  </td>
                   <td className="p-2 border-t">{captain.position}</td>
                 </tr>
               ))}

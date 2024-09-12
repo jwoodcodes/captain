@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { createPostponedAbortSignal } from "next/dist/server/app-render/dynamic-rendering";
 import { NextResponse } from "next/server";
 
 const url =
@@ -25,6 +26,8 @@ export async function POST(request) {
           [`week${week}.position`]: position,
         },
       },
+      { [`week${week}Captain`]: captainName },
+      { [`week${week}Position`]: position },
       { upsert: true }
     );
 

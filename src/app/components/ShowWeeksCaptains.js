@@ -23,7 +23,7 @@ const CurrentWeekDisplay = () => {
 
   return (
     <div className="current-week-display">
-      <h2>Current Week's Selections</h2>
+      <h2>Current Week&apos;s Selections</h2>
       {usersData.length === 0 ? (
         <p>Loading...</p>
       ) : (

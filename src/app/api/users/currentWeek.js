@@ -32,6 +32,5 @@ async function fetchCaptainDataFromMongodb() {
 }
 
 let captainDataForTable = await fetchCaptainDataFromMongodb();
-return captainDataForTable;
 
 export { captainDataForTable };

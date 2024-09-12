@@ -150,20 +150,51 @@ export default function PlayerSelect({
     }
   }
 
-  const formatCaptainData = () => {
-    console.log(captainData);
-    return Object.entries(captainData)
-      .filter(
-        ([key, value]) =>
-          key.startsWith("week") && value.player && value.position
-      )
-      .map(([key, value]) => ({
-        weekNumber: parseInt(key.replace("week", "")),
-        player: value.player,
-        position: value.position,
-      }))
-      .sort((a, b) => a.weekNumber - b.weekNumber);
-  };
+  // console.log("captainData:", captainData);
+
+  // const formatCaptainData = () => {
+  //   console.log("Starting formatCaptainData");
+  //   const entries = Object.entries(captainData);
+  //   console.log("Entries:", entries);
+
+  //   const filtered = entries.filter(
+  //     ([key]) => key.includes("Captain") || key.includes("Position")
+  //   );
+  //   console.log("Filtered entries:", filtered);
+
+  //   const result = filtered.reduce((acc, [key, value]) => {
+  //     const weekNumber = key.replace(/\D/g, "");
+  //     const type = key.includes("Captain") ? "Captain" : "Position";
+
+  //     if (!acc[weekNumber]) {
+  //       acc[weekNumber] = { weekNumber };
+  //     }
+
+  //     acc[weekNumber][type.toLowerCase()] = value;
+  //     console.log(`Processing ${key}: ${value}, Current acc:`, acc);
+  //     return acc;
+  //   }, {});
+
+  //   console.log("Final result:", result);
+  //   return result;
+  // };
+
+  // const formattedData = formatCaptainData();
+  // const sortedWeeks = Object.values(formattedData).sort(
+  //   (a, b) => a.weekNumber - b.weekNumber
+  // );
+
+  // console.log("formattedData:", formattedData);
+  // console.log("sortedWeeks:", sortedWeeks);
+
+  // const getTableData = () => {
+  //   captainData.map((data) => {
+  //     let weekToUse = data[`week${week}`];
+  //     console.log(data.username, weekToUse);
+  //   });
+  // };
+
+  // let test = getTableData();
 
   return (
     <div>
@@ -233,31 +264,34 @@ export default function PlayerSelect({
       {user && captainData && Object.keys(captainData).length > 0 && (
         <div className="mt-8">
           <h2 className="text-xl text-white text-center font-bold mb-4">
-            My Captain Selections
+            Week {week} captain selections
           </h2>
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-blue-600 text-white">
-                <th className="p-2 text-left ">Week</th>
+                <th className="p-2 text-left ">Manager</th>
                 <th className="p-2 text-left">Player</th>
                 <th className="p-2 text-left">Position</th>
               </tr>
             </thead>
             <tbody>
-              {formatCaptainData().map((captain, index) => (
-                <tr
-                  key={captain.weekNumber}
-                  className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
-                >
-                  <td className="p-2 border-t text-white">
-                    Week {captain.weekNumber}
-                  </td>
-                  <td className="p-2 border-t font-medium text-white">
-                    {captain.week1.player}
-                  </td>
-                  <td className="p-2 border-t">{captain.position}</td>
-                </tr>
-              ))}
+              {captainData.map((data) => {
+                let weekToUse = data[`week${week}`];
+                // console.log(data.username, weekToUse);
+                if (data.username === "Kurtgoss") {
+                  data.username = "Kurt";
+                }
+                if (data.username === "sethmccurley") {
+                  data.username = "Chef Bezos";
+                }
+                return (
+                  <tr key={data.username} className="text-white">
+                    <td>{data.username}</td>
+                    <td>{weekToUse?.player || "Not set"}</td>
+                    <td>{weekToUse?.position || "Not set"}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

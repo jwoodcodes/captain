@@ -24,10 +24,10 @@ export async function POST(request) {
         $set: {
           [`week${week}.player`]: captainName,
           [`week${week}.position`]: position,
+          [`week${week}Captain`]: captainName,
+          [`week${week}Position`]: position,
         },
       },
-      { [`week${week}Captain`]: captainName },
-      { [`week${week}Position`]: position },
       { upsert: true }
     );
 

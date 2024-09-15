@@ -1,36 +1,41 @@
-import React from "react";
-
 import { NextResponse } from "next/server";
 import { MongoClient } from "mongodb";
+
+const url =
+  "mongodb+srv://devJay:Hesstrucksarethebest@dailydynasties.syom4sb.mongodb.net/test";
+
 async function fetchCaptainDataFromMongodb() {
-  const url =
-    "mongodb+srv://devJay:Hesstrucksarethebest@dailydynasties.syom4sb.mongodb.net/test";
   const client = new MongoClient(url);
 
-  const dbName = "dailydynasties";
   try {
     await client.connect();
     console.log("Connected correctly to server");
-    const db = client.db(dbName);
+    const db = client.db("dailydynasties");
     const col = db.collection("captain2024");
 
     const captainDocs = await col.find({}).toArray();
 
-    // Serialize the documents to remove the ObjectId
-    const serializedCaptainDocs = captainDocs.map((doc) => ({
+    return captainDocs.map((doc) => ({
       ...doc,
-      _id: doc._id.toString(), // Convert ObjectId to string
+      _id: doc._id.toString(),
     }));
-
-    return serializedCaptainDocs;
   } catch (err) {
-    console.log(err.stack);
+    console.error("Error fetching captain data:", err);
     return [];
   } finally {
     await client.close();
   }
 }
 
-let captainDataForTable = await fetchCaptainDataFromMongodb();
-
-export { captainDataForTable };
+export async function GET(request) {
+  try {
+    const captainData = await fetchCaptainDataFromMongodb();
+    return NextResponse.json(captainData);
+  } catch (error) {
+    console.error("Error in GET request:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}

@@ -34,14 +34,10 @@ export default function PlayerSelect({
 
   const fetchLatestCaptainData = async () => {
     try {
-      // Add a timestamp to the URL to prevent caching
       const timestamp = new Date().getTime();
-      const response = await fetch(
-        `/api/getCaptainData?week=${week}&t=${timestamp}`,
-        {
-          cache: "no-store",
-        }
-      );
+      const response = await fetch(`/api/users/currentWeek?t=${timestamp}`, {
+        cache: "no-store",
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch latest captain data");
       }

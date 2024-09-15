@@ -24,11 +24,24 @@ export default function PlayerSelect({
   useEffect(() => {
     console.log("Initial captainData:", captainData);
     fetchLatestCaptainData();
+
+    // Set up an interval to fetch data every 30 seconds
+    const intervalId = setInterval(fetchLatestCaptainData, 30000);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
   }, [week]);
 
   const fetchLatestCaptainData = async () => {
     try {
-      const response = await fetch(`/api/getCaptainData?week=${week}`);
+      // Add a timestamp to the URL to prevent caching
+      const timestamp = new Date().getTime();
+      const response = await fetch(
+        `/api/getCaptainData?week=${week}&t=${timestamp}`,
+        {
+          cache: "no-store",
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch latest captain data");
       }
@@ -139,6 +152,9 @@ export default function PlayerSelect({
 
           setCaptainDataState(data.updatedUser);
 
+          // Fetch latest data immediately after updating
+          await fetchLatestCaptainData();
+
           setPopoverMessage(`Captain for week ${week} set to ${player.name}`);
           setShowPopover(true);
           setTimeout(() => setShowPopover(false), 3000);
@@ -165,52 +181,6 @@ export default function PlayerSelect({
       setTimeout(() => setShowPopover(false), 3000);
     }
   }
-
-  // console.log("captainData:", captainData);
-
-  // const formatCaptainData = () => {
-  //   console.log("Starting formatCaptainData");
-  //   const entries = Object.entries(captainData);
-  //   console.log("Entries:", entries);
-
-  //   const filtered = entries.filter(
-  //     ([key]) => key.includes("Captain") || key.includes("Position")
-  //   );
-  //   console.log("Filtered entries:", filtered);
-
-  //   const result = filtered.reduce((acc, [key, value]) => {
-  //     const weekNumber = key.replace(/\D/g, "");
-  //     const type = key.includes("Captain") ? "Captain" : "Position";
-
-  //     if (!acc[weekNumber]) {
-  //       acc[weekNumber] = { weekNumber };
-  //     }
-
-  //     acc[weekNumber][type.toLowerCase()] = value;
-  //     console.log(`Processing ${key}: ${value}, Current acc:`, acc);
-  //     return acc;
-  //   }, {});
-
-  //   console.log("Final result:", result);
-  //   return result;
-  // };
-
-  // const formattedData = formatCaptainData();
-  // const sortedWeeks = Object.values(formattedData).sort(
-  //   (a, b) => a.weekNumber - b.weekNumber
-  // );
-
-  // console.log("formattedData:", formattedData);
-  // console.log("sortedWeeks:", sortedWeeks);
-
-  // const getTableData = () => {
-  //   captainData.map((data) => {
-  //     let weekToUse = data[`week${week}`];
-  //     console.log(data.username, weekToUse);
-  //   });
-  // };
-
-  // let test = getTableData();
 
   return (
     <div>

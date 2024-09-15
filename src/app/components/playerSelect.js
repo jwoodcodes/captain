@@ -15,15 +15,31 @@ export default function PlayerSelect({
   const [showPopover, setShowPopover] = useState(false);
   const [popoverMessage, setPopoverMessage] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [latestCaptainData, setLatestCaptainData] = useState(captainData);
 
   const filteredPlayerData = initialSleeperPlayerData.filter((player) =>
     ["QB", "RB", "WR", "TE"].includes(player.position)
   );
 
   useEffect(() => {
-    console.log(captainData);
-    setCaptainDataState(captainData);
-  }, []);
+    console.log("Initial captainData:", captainData);
+    fetchLatestCaptainData();
+  }, [week]);
+
+  const fetchLatestCaptainData = async () => {
+    try {
+      const response = await fetch(`/api/getCaptainData?week=${week}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch latest captain data");
+      }
+      const data = await response.json();
+      console.log("Fetched latest captain data:", data);
+      setLatestCaptainData(data);
+      setCaptainDataState(data);
+    } catch (error) {
+      console.error("Error fetching latest captain data:", error);
+    }
+  };
 
   function teamOneSearchOnChange(event) {
     setTeamOneSearchValue(event.target.value);
@@ -261,7 +277,7 @@ export default function PlayerSelect({
       )}
       {showPopover && <div className={styles.popover}>{popoverMessage}</div>}
 
-      {user && captainData && Object.keys(captainData).length > 0 && (
+      {user && latestCaptainData && latestCaptainData.length > 0 && (
         <div className="mt-8">
           <h2 className="text-xl text-white text-center font-bold mb-4">
             Week {week} captain selections
@@ -275,9 +291,9 @@ export default function PlayerSelect({
               </tr>
             </thead>
             <tbody>
-              {captainData.map((data) => {
+              {latestCaptainData.map((data) => {
                 let weekToUse = data[`week${week}`];
-                // console.log(data.username, weekToUse);
+                console.log(`Data for ${data.username}:`, weekToUse);
                 if (data.username === "Kurtgoss") {
                   data.username = "Kurt";
                 }

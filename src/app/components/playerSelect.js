@@ -16,7 +16,7 @@ export default function PlayerSelect({
   const [popoverMessage, setPopoverMessage] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [latestCaptainData, setLatestCaptainData] = useState(captainData);
-
+  //
   const filteredPlayerData = initialSleeperPlayerData.filter((player) =>
     ["QB", "RB", "WR", "TE"].includes(player.position)
   );
@@ -39,7 +39,9 @@ export default function PlayerSelect({
         cache: "no-store",
       });
       if (!response.ok) {
-        throw new Error("Failed to fetch latest captain data");
+        throw new Error(
+          `Failed to fetch latest captain data: ${response.status} ${response.statusText}`
+        );
       }
       const data = await response.json();
       console.log("Fetched latest captain data:", data);

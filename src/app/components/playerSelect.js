@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import oCaptainLeagueDataArray from "../data/oCaptainLeagueDataArray";
 import styles from "../styles/extraStyles.module.css";
 import kickoffTimes from "../data/kickoffTimes";
@@ -21,18 +21,7 @@ export default function PlayerSelect({
     ["QB", "RB", "WR", "TE"].includes(player.position)
   );
 
-  useEffect(() => {
-    console.log("Initial captainData:", captainData);
-    fetchLatestCaptainData();
-
-    // Set up an interval to fetch data every 30 seconds
-    const intervalId = setInterval(fetchLatestCaptainData, 30000);
-
-    // Clean up the interval on component unmount
-    return () => clearInterval(intervalId);
-  }, [week]);
-
-  const fetchLatestCaptainData = async () => {
+  const fetchLatestCaptainData = useCallback(async () => {
     try {
       const timestamp = new Date().getTime();
       const response = await fetch(`/api/users/currentWeek?t=${timestamp}`, {
@@ -50,7 +39,18 @@ export default function PlayerSelect({
     } catch (error) {
       console.error("Error fetching latest captain data:", error);
     }
-  };
+  }, [setCaptainDataState]);
+
+  useEffect(() => {
+    console.log("Initial captainData:", captainData);
+    fetchLatestCaptainData();
+
+    // Set up an interval to fetch data every 30 seconds
+    const intervalId = setInterval(fetchLatestCaptainData, 30000);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [week, captainData, fetchLatestCaptainData]);
 
   function teamOneSearchOnChange(event) {
     setTeamOneSearchValue(event.target.value);

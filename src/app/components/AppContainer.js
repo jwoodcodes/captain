@@ -9,7 +9,7 @@ export default function AppContainer({
   captainData,
 }) {
   const [user, setUser] = useState(null);
-  const [week, setWeek] = useState(2);
+  const [week, setWeek] = useState(3);
   const [captainDataState, setCaptainDataState] = useState(captainData);
 
   return (

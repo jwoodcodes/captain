@@ -4,14 +4,20 @@ import axios from "axios";
 
 const CurrentWeekDisplay = () => {
   const [usersData, setUsersData] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUsersData = async () => {
       try {
         const response = await axios.get("/api/users/current-week");
         setUsersData(response.data);
+        setLastUpdated(new Date());
+        setError(null);
+        console.log("Data fetched successfully:", response.data);
       } catch (error) {
         console.error("Error fetching users data:", error);
+        setError("Failed to fetch data. Please try again later.");
       }
     };
 
@@ -30,6 +36,10 @@ const CurrentWeekDisplay = () => {
   return (
     <div className="current-week-display">
       <h2>Current Week&apos;s Selections</h2>
+      {error && <p className="error">{error}</p>}
+      {lastUpdated && (
+        <p className="last-updated">Last updated: {lastUpdated.toLocaleString()}</p>
+      )}
       {usersData.length === 0 ? (
         <p>Loading...</p>
       ) : (

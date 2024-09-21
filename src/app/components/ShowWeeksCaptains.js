@@ -9,14 +9,20 @@ const CurrentWeekDisplay = () => {
     const fetchUsersData = async () => {
       try {
         const response = await axios.get("/api/users/current-week");
-        console.log(response);
         setUsersData(response.data);
       } catch (error) {
         console.error("Error fetching users data:", error);
       }
     };
 
+    // Fetch data immediately
     fetchUsersData();
+
+    // Set up an interval to fetch data every 30 seconds
+    const intervalId = setInterval(fetchUsersData, 30000);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   //   console.log(usersData);

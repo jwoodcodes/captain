@@ -150,7 +150,7 @@ export default function PlayerSelect({
 
           setCaptainDataState(data.updatedUser);
 
-          // Fetch latest data immediately after updating
+          // After successful update, fetch the latest data
           await fetchLatestCaptainData();
 
           setPopoverMessage(`Captain for week ${week} set to ${player.name}`);

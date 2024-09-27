@@ -14,6 +14,7 @@ async function fetchCaptainDataFromMongodb() {
     const col = db.collection("captain2024");
 
     const captainDocs = await col.find({}).toArray();
+    console.log(`Fetched ${captainDocs.length} documents from MongoDB`);
 
     return captainDocs.map((doc) => ({
       ...doc,
@@ -29,8 +30,18 @@ async function fetchCaptainDataFromMongodb() {
 
 export async function GET(request) {
   try {
+    console.log("Received GET request for captain data");
     const captainData = await fetchCaptainDataFromMongodb();
-    return NextResponse.json(captainData);
+    const response = NextResponse.json({
+      timestamp: new Date().toISOString(),
+      data: captainData
+    });
+    
+    // Set cache control headers
+    response.headers.set('Cache-Control', 'no-store, max-age=0');
+    
+    console.log(`Returning ${captainData.length} captain data entries`);
+    return response;
   } catch (error) {
     console.error("Error in GET request:", error);
     return NextResponse.json(

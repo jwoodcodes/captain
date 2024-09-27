@@ -17,12 +17,16 @@ export default function PlayerSelect({
   const [showDropdown, setShowDropdown] = useState(false);
   const [latestCaptainData, setLatestCaptainData] = useState(captainData);
   const [tableKey, setTableKey] = useState(0);
-  //
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const filteredPlayerData = initialSleeperPlayerData.filter((player) =>
     ["QB", "RB", "WR", "TE"].includes(player.position)
   );
 
   const fetchLatestCaptainData = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
     try {
       const timestamp = new Date().getTime();
       const response = await fetch(`/api/users/currentWeek?t=${timestamp}`, {
@@ -35,11 +39,14 @@ export default function PlayerSelect({
       }
       const data = await response.json();
       console.log("Fetched latest captain data:", data);
-      setLatestCaptainData(data);
-      setCaptainDataState(data);
+      setLatestCaptainData(data.data); // Assuming the API now returns { timestamp, data }
+      setCaptainDataState(data.data);
       setTableKey(prevKey => prevKey + 1); // Force table re-render
     } catch (error) {
       console.error("Error fetching latest captain data:", error);
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   }, [setCaptainDataState]);
 
@@ -52,7 +59,7 @@ export default function PlayerSelect({
 
     // Clean up the interval on component unmount
     return () => clearInterval(intervalId);
-  }, [week, captainData, fetchLatestCaptainData]);
+  }, [week, fetchLatestCaptainData]); // Removed captainData from dependencies
 
   function teamOneSearchOnChange(event) {
     setTeamOneSearchValue(event.target.value);
@@ -247,6 +254,8 @@ export default function PlayerSelect({
       )}
       {showPopover && <div className={styles.popover}>{popoverMessage}</div>}
 
+      {isLoading && <p>Loading...</p>}
+      {error && <p>Error: {error}</p>}
       {user && latestCaptainData && latestCaptainData.length > 0 && (
         <div className="mt-8" key={tableKey}>
           <h2 className="text-xl text-white text-center font-bold mb-4">

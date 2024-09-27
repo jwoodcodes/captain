@@ -16,6 +16,7 @@ export default function PlayerSelect({
   const [popoverMessage, setPopoverMessage] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [latestCaptainData, setLatestCaptainData] = useState(captainData);
+  const [tableKey, setTableKey] = useState(0);
   //
   const filteredPlayerData = initialSleeperPlayerData.filter((player) =>
     ["QB", "RB", "WR", "TE"].includes(player.position)
@@ -36,6 +37,7 @@ export default function PlayerSelect({
       console.log("Fetched latest captain data:", data);
       setLatestCaptainData(data);
       setCaptainDataState(data);
+      setTableKey(prevKey => prevKey + 1); // Force table re-render
     } catch (error) {
       console.error("Error fetching latest captain data:", error);
     }
@@ -246,7 +248,7 @@ export default function PlayerSelect({
       {showPopover && <div className={styles.popover}>{popoverMessage}</div>}
 
       {user && latestCaptainData && latestCaptainData.length > 0 && (
-        <div className="mt-8">
+        <div className="mt-8" key={tableKey}>
           <h2 className="text-xl text-white text-center font-bold mb-4">
             Week {week} captain selections
           </h2>

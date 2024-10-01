@@ -19,6 +19,7 @@ export default function PlayerSelect({
   const [tableKey, setTableKey] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const filteredPlayerData = initialSleeperPlayerData.filter((player) =>
     ["QB", "RB", "WR", "TE"].includes(player.position)
@@ -189,6 +190,23 @@ export default function PlayerSelect({
     }
   }
 
+  const handleUpdateTable = async () => {
+    setIsUpdating(true);
+    try {
+      await fetchLatestCaptainData();
+      setPopoverMessage("Table updated successfully!");
+      setShowPopover(true);
+      setTimeout(() => setShowPopover(false), 3000);
+    } catch (error) {
+      console.error("Error updating table:", error);
+      setPopoverMessage("Failed to update table. Please try again.");
+      setShowPopover(true);
+      setTimeout(() => setShowPopover(false), 3000);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
     <div>
       <div>
@@ -261,10 +279,19 @@ export default function PlayerSelect({
           <h2 className="text-xl text-white text-center font-bold mb-4">
             Week {week} captain selections
           </h2>
+          <div className="flex justify-center mb-4">
+            <button
+              onClick={handleUpdateTable}
+              disabled={isUpdating}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              {isUpdating ? 'Updating...' : 'Update Table'}
+            </button>
+          </div>
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-blue-600 text-white">
-                <th className="p-2 text-left ">Manager</th>
+                <th className="p-2 text-left">Manager</th>
                 <th className="p-2 text-left">Player</th>
                 <th className="p-2 text-left">Position</th>
               </tr>

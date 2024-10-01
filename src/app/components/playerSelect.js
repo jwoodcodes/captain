@@ -15,7 +15,7 @@ export default function PlayerSelect({
   const [showPopover, setShowPopover] = useState(false);
   const [popoverMessage, setPopoverMessage] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
-  const [latestCaptainData, setLatestCaptainData] = useState(captainData);
+  const [latestCaptainData, setLatestCaptainData] = useState([]);
   const [tableKey, setTableKey] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -26,41 +26,41 @@ export default function PlayerSelect({
   );
 
   const fetchLatestCaptainData = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+    setIsUpdating(true);
     try {
       const timestamp = new Date().getTime();
+      console.log(`Attempting to fetch data from: /api/users/currentWeek?t=${timestamp}`);
       const response = await fetch(`/api/users/currentWeek?t=${timestamp}`, {
-        cache: "no-store",
+        cache: 'no-store',
       });
+      
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', response.status, response.statusText);
+        console.error('Error details:', errorText);
         throw new Error(
           `Failed to fetch latest captain data: ${response.status} ${response.statusText}`
         );
       }
-      const data = await response.json();
-      console.log("Fetched latest captain data:", data);
-      setLatestCaptainData(data.data); // Assuming the API now returns { timestamp, data }
-      setCaptainDataState(data.data);
+      
+      const responseData = await response.json();
+      console.log("Fetched latest captain data:", responseData);
+      setLatestCaptainData(responseData.data); // Set only the 'data' part of the response
+      setCaptainDataState(responseData.data);
       setTableKey(prevKey => prevKey + 1); // Force table re-render
+      setError(null);
     } catch (error) {
-      console.error("Error fetching latest captain data:", error);
-      setError(error.message);
+      console.error("Error in fetchLatestCaptainData:", error);
+      setError("Failed to fetch data. Please try again later.");
+      throw error;
     } finally {
-      setIsLoading(false);
+      setIsUpdating(false);
     }
   }, [setCaptainDataState]);
 
   useEffect(() => {
-    console.log("Initial captainData:", captainData);
     fetchLatestCaptainData();
-
-    // Set up an interval to fetch data every 30 seconds
-    const intervalId = setInterval(fetchLatestCaptainData, 30000);
-
-    // Clean up the interval on component unmount
-    return () => clearInterval(intervalId);
-  }, [week, fetchLatestCaptainData]); // Removed captainData from dependencies
+  }, [fetchLatestCaptainData]);
 
   function teamOneSearchOnChange(event) {
     setTeamOneSearchValue(event.target.value);
@@ -191,21 +191,13 @@ export default function PlayerSelect({
   }
 
   const handleUpdateTable = async () => {
-    setIsUpdating(true);
-    try {
-      await fetchLatestCaptainData();
-      setPopoverMessage("Table updated successfully!");
-      setShowPopover(true);
-      setTimeout(() => setShowPopover(false), 3000);
-    } catch (error) {
-      console.error("Error updating table:", error);
-      setPopoverMessage("Failed to update table. Please try again.");
-      setShowPopover(true);
-      setTimeout(() => setShowPopover(false), 3000);
-    } finally {
-      setIsUpdating(false);
-    }
+    await fetchLatestCaptainData();
   };
+
+  console.log('Rendering PlayerSelect component');
+  console.log('user:', user);
+  console.log('latestCaptainData:', latestCaptainData);
+  console.log('error:', error);
 
   return (
     <div>
@@ -274,20 +266,23 @@ export default function PlayerSelect({
 
       {isLoading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
-      {user && latestCaptainData && latestCaptainData.length > 0 && (
+      <h2 className="text-xl text-white text-center font-bold mb-4">
+        Week {week} captain selections
+      </h2>
+      <div className="flex justify-center mb-4">
+        <button
+          onClick={handleUpdateTable}
+          disabled={isUpdating}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          {isUpdating ? 'Updating...' : 'Update Table'}
+        </button>
+      </div>
+      
+      {error && <p className="error text-red-500">{error}</p>}
+      
+      {!error && user && Array.isArray(latestCaptainData) && latestCaptainData.length > 0 ? (
         <div className="mt-8" key={tableKey}>
-          <h2 className="text-xl text-white text-center font-bold mb-4">
-            Week {week} captain selections
-          </h2>
-          <div className="flex justify-center mb-4">
-            <button
-              onClick={handleUpdateTable}
-              disabled={isUpdating}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              {isUpdating ? 'Updating...' : 'Update Table'}
-            </button>
-          </div>
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-blue-600 text-white">
@@ -300,15 +295,12 @@ export default function PlayerSelect({
               {latestCaptainData.map((data) => {
                 let weekToUse = data[`week${week}`];
                 console.log(`Data for ${data.username}:`, weekToUse);
-                if (data.username === "Kurtgoss") {
-                  data.username = "Kurt";
-                }
-                if (data.username === "sethmccurley") {
-                  data.username = "Chef Bezos";
-                }
+                let displayUsername = data.username;
+                if (data.username === "Kurtgoss") displayUsername = "Kurt";
+                if (data.username === "sethmccurley") displayUsername = "Chef Bezos";
                 return (
                   <tr key={data.username} className="text-white">
-                    <td>{data.username}</td>
+                    <td>{displayUsername}</td>
                     <td>{weekToUse?.player || "Not set"}</td>
                     <td>{weekToUse?.position || "Not set"}</td>
                   </tr>
@@ -317,6 +309,8 @@ export default function PlayerSelect({
             </tbody>
           </table>
         </div>
+      ) : (
+        <p className="text-white">No data available to display.</p>
       )}
     </div>
   );

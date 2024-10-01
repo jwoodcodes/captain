@@ -27,7 +27,6 @@ async function fetchCaptainDataFromMongodb() {
     await client.close();
   }
 }
-
 export async function GET(request) {
   try {
     console.log("Received GET request for captain data");
@@ -50,3 +49,4 @@ export async function GET(request) {
     );
   }
 }
+

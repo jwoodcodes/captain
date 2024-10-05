@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React from "react";
+import React, { useState, useEffect } from "react";
 // import GetData from "./data/dataHandler";
 import { initialSleeperPlayerData, captainData } from "./data/dataHandler";
 import AppContainer from "./components/AppContainer";
@@ -7,6 +7,25 @@ import PlayerSelect from "./components/playerSelect";
 import UserAuth from "./components/UserAuth";
 import oCaptainLeagueDataArray from "./data/oCaptainLeagueDataArray";
 export default function Home() {
+  const [initialSleeperPlayerData, setInitialSleeperPlayerData] = useState([]);
+
+  useEffect(() => {
+    async function fetchSleeperData() {
+      try {
+        const response = await fetch('/api/sleeper-players');
+        if (!response.ok) {
+          throw new Error('Failed to fetch sleeper player data');
+        }
+        const data = await response.json();
+        setInitialSleeperPlayerData(data);
+      } catch (error) {
+        console.error('Error fetching sleeper player data:', error);
+      }
+    }
+
+    fetchSleeperData();
+  }, []);
+
   // console.log(initialSleeperPlayerData);
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-black">
@@ -16,6 +35,13 @@ export default function Home() {
       <AppContainer
         initialSleeperPlayerData={initialSleeperPlayerData}
         captainData={captainData}
+      />
+      <PlayerSelect
+        initialSleeperPlayerData={initialSleeperPlayerData}
+        user={user}
+        week={week}
+        captainData={captainData}
+        setCaptainDataState={setCaptainDataState}
       />
     </main>
   );

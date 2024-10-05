@@ -53,12 +53,61 @@ export default function PlayerSelect({ initialSleeperPlayerData, user, week, cap
   const latestCaptainData = swrData?.data || [];
   console.log('Rendering with latestCaptainData:', latestCaptainData);
 
+  const handleSearch = (e) => {
+    setTeamOneSearchValue(e.target.value);
+    setShowDropdown(true);
+  };
+
+  const filteredPlayers = initialSleeperPlayerData ? initialSleeperPlayerData.filter((player) =>
+    player.full_name.toLowerCase().includes(teamOneSearchValue.toLowerCase())
+  ) : [];
+
+  console.log('Filtered players:', filteredPlayers.length);
+
+  const onSearch = (searchTerm, user) => {
+    console.log("Search term:", searchTerm);
+    console.log("User:", user);
+    // Implement your search logic here
+  };
+
   return (
     <div>
       <h2 className="text-xl text-white text-center font-bold mb-4">
         Week {week} captain selections
       </h2>
+
+      {/* Player select input */}
+      <div className="relative mb-4">
+        {console.log('Rendering player select input')}
+        <input
+          type="text"
+          value={teamOneSearchValue}
+          onChange={handleSearch}
+          placeholder="Search for a player"
+          className="w-full p-2 border rounded text-black"
+        />
+        {showDropdown && filteredPlayers.length > 0 && (
+          <ul className="absolute z-10 w-full bg-white border rounded mt-1 max-h-60 overflow-auto">
+            {filteredPlayers.map((player) => (
+              <li
+                key={player.player_id}
+                onClick={() => {
+                  onSearch(player.full_name, user);
+                  setShowDropdown(false);
+                  setTeamOneSearchValue("");
+                }}
+                className="p-2 hover:bg-gray-100 cursor-pointer text-black"
+              >
+                {player.full_name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Update Table button */}
       <div className="flex justify-center mb-4">
+        {console.log('Rendering update table button')}
         <button
           onClick={handleUpdateTable}
           disabled={isUpdating}

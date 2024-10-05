@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useCallback, useEffect } from "react";
 import useSWR from 'swr';
-import { handleUpdateTable } from "../components/ClientPlayerSelect";
+import ClientPlayerSelect from '../components/ClientPlayerSelect';
 
 export default function PlayerSelect({ initialSleeperPlayerData, user, week, captainData, setCaptainDataState }) {
   console.log('PlayerSelect rendering, props:', { 

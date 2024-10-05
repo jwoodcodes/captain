@@ -99,7 +99,7 @@ export default function PlayerSelect({
       (p) => p.name.toLowerCase() === searchTerm.toLowerCase()
     );
 
-    console.log("Found player:", player);
+    // console.log("Found player:", player);
 
     if (player) {
       function compareDateAndTime(targetDate, targetTime) {

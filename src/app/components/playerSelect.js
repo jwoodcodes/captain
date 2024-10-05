@@ -197,7 +197,7 @@ export default function PlayerSelect({
   console.log('Rendering PlayerSelect component');
   console.log('user:', user);
   console.log('latestCaptainData:', latestCaptainData);
-  console.log('error:', error);
+  
 
   return (
     <div>

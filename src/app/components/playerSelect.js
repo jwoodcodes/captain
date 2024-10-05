@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, memo } from "react";
 import oCaptainLeagueDataArray from "../data/oCaptainLeagueDataArray";
 import styles from "../styles/extraStyles.module.css";
 import kickoffTimes from "../data/kickoffTimes";
+import useSWR from 'swr';
 
 const PlayerSelect = memo(function PlayerSelect({
   initialSleeperPlayerData,
@@ -25,23 +26,33 @@ const PlayerSelect = memo(function PlayerSelect({
     ["QB", "RB", "WR", "TE"].includes(player.position)
   );
 
-  const fetchLatestCaptainData = useCallback(async () => {
-    try {
-      const timestamp = new Date().getTime();
-      const response = await fetch(`/api/users/currentWeek?t=${timestamp}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const responseData = await response.json();
-      console.log("Fetched data:", responseData);
-      setLatestCaptainData(responseData.data); // Make sure we're setting the data array, not the whole response
-      setCaptainDataState(responseData.data);
-      setTableKey(prevKey => prevKey + 1); // Force re-render
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setError("Failed to fetch data. Please try again.");
+  const fetcher = async (url) => {
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error('An error occurred while fetching the data.');
     }
-  }, [setCaptainDataState]);
+    return res.json();
+  };
+
+  const { data: latestCaptainData, mutate } = useSWR(`/api/users/currentWeek?t=${Date.now()}`, fetcher, {
+    refreshInterval: 0,
+    revalidateOnFocus: false,
+    dedupingInterval: 0,
+  });
+
+  const handleUpdateTable = async () => {
+    setIsUpdating(true);
+    try {
+      await mutate();
+      setTableKey(prev => prev + 1);
+      console.log("Table data updated successfully");
+    } catch (error) {
+      console.error("Error updating table:", error);
+      setError("Failed to update table. Please try again.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   useEffect(() => {
     fetchLatestCaptainData();
@@ -174,19 +185,6 @@ const PlayerSelect = memo(function PlayerSelect({
       setTimeout(() => setShowPopover(false), 3000);
     }
   }
-
-  const handleUpdateTable = async () => {
-    console.log("Update button clicked");
-    setIsUpdating(true);
-    try {
-      await fetchLatestCaptainData();
-      console.log("Table data updated successfully");
-    } catch (error) {
-      console.error("Error updating table:", error);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
 
   console.log('Rendering PlayerSelect component');
   console.log('user:', user);

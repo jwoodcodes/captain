@@ -3,30 +3,43 @@ import React, { useState, useCallback, useEffect } from "react";
 import useSWR from 'swr';
 
 export default function PlayerSelect({ initialSleeperPlayerData, user, week, captainData, setCaptainDataState }) {
+  console.log('PlayerSelect rendering, props:', { initialSleeperPlayerData, user, week, captainData });
+
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
   const [tableKey, setTableKey] = useState(0);
   const [teamOneSearchValue, setTeamOneSearchValue] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const fetcher = async (url) => {
+  const fetcher = useCallback(async (url) => {
+    console.log('Fetching data from:', url);
     const res = await fetch(url);
     if (!res.ok) {
       throw new Error('An error occurred while fetching the data.');
     }
-    return res.json();
-  };
+    const data = await res.json();
+    console.log('Fetched data:', data);
+    return data;
+  }, []);
 
-  const { data: swrData, mutate } = useSWR(`/api/users/currentWeek?t=${Date.now()}`, fetcher, {
+  const { data: swrData, error: swrError } = useSWR(`/api/users/currentWeek`, fetcher, {
     refreshInterval: 0,
     revalidateOnFocus: false,
     dedupingInterval: 0,
   });
 
-  const handleUpdateTable = async () => {
+  useEffect(() => {
+    console.log('swrData updated:', swrData);
+    if (swrData) {
+      setCaptainDataState(swrData.data);
+    }
+  }, [swrData, setCaptainDataState]);
+
+  const handleUpdateTable = useCallback(async () => {
     setIsUpdating(true);
     try {
-      await mutate();
+      const updatedData = await fetcher(`/api/users/currentWeek?t=${Date.now()}`);
+      setCaptainDataState(updatedData.data);
       setTableKey(prev => prev + 1);
       console.log("Table data updated successfully");
     } catch (error) {
@@ -35,11 +48,10 @@ export default function PlayerSelect({ initialSleeperPlayerData, user, week, cap
     } finally {
       setIsUpdating(false);
     }
-  };
+  }, [fetcher, setCaptainDataState]);
 
-  // Use swrData.data as the latest captain data
   const latestCaptainData = swrData?.data || [];
-  console.log('latestCaptainData:', latestCaptainData);
+  console.log('Rendering with latestCaptainData:', latestCaptainData);
 
   return (
     <div>

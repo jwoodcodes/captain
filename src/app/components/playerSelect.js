@@ -26,35 +26,35 @@ export default function PlayerSelect({
   );
 
   const fetchLatestCaptainData = useCallback(async () => {
-    setIsUpdating(true);
+    const timestamp = new Date().getTime();
+    console.log(`Fetching data at ${timestamp}`);
     try {
-      const timestamp = new Date().getTime();
-      console.log(`Attempting to fetch data from: /api/users/currentWeek?t=${timestamp}`);
       const response = await fetch(`/api/users/currentWeek?t=${timestamp}`, {
         cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
       });
       
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error response:', response.status, response.statusText);
         console.error('Error details:', errorText);
-        throw new Error(
-          `Failed to fetch latest captain data: ${response.status} ${response.statusText}`
-        );
+        throw new Error(`Failed to fetch latest captain data: ${response.status} ${response.statusText}`);
       }
       
       const responseData = await response.json();
       console.log("Fetched latest captain data:", responseData);
-      setLatestCaptainData(responseData.data); // Set only the 'data' part of the response
+      setLatestCaptainData(responseData.data);
       setCaptainDataState(responseData.data);
-      setTableKey(prevKey => prevKey + 1); // Force table re-render
+      setTableKey(prevKey => prevKey + 1);
       setError(null);
     } catch (error) {
       console.error("Error in fetchLatestCaptainData:", error);
       setError("Failed to fetch data. Please try again later.");
-      throw error;
-    } finally {
-      setIsUpdating(false);
+      throw error; // Re-throw the error so it can be caught in handleUpdateTable
     }
   }, [setCaptainDataState]);
 
@@ -191,7 +191,17 @@ export default function PlayerSelect({
   }
 
   const handleUpdateTable = async () => {
-    await fetchLatestCaptainData();
+    console.log("Update button clicked");
+    setIsUpdating(true);
+    try {
+      await fetchLatestCaptainData();
+      console.log("Table data updated successfully");
+    } catch (error) {
+      console.error("Error updating table:", error);
+      setError("Failed to update table. Please try again.");
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   console.log('Rendering PlayerSelect component');

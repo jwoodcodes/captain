@@ -47,4 +47,14 @@ export default function Home() {
   );
 }
 
+// or wherever PlayerSelect is being used
+console.log('Rendering parent component with props:', {
+  initialSleeperPlayerDataLength: initialSleeperPlayerData?.length,
+  user,
+  week,
+  captainDataLength: captainData?.length
+});
+
+// ... other code ...
+
 // npm --max-old-space-size=8192 run dev

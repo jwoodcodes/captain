@@ -3,11 +3,13 @@ import React, { useState, useCallback, useEffect } from "react";
 import useSWR from 'swr';
 
 export default function PlayerSelect({ initialSleeperPlayerData, user, week, captainData, setCaptainDataState }) {
-  console.log('PlayerSelect rendering, props:', { initialSleeperPlayerData, user, week, captainData });
+  console.log('PlayerSelect rendering, props:', { 
+    initialSleeperPlayerDataLength: initialSleeperPlayerData?.length,
+    user,
+    week,
+    captainDataLength: captainData?.length
+  });
 
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [error, setError] = useState(null);
-  const [tableKey, setTableKey] = useState(0);
   const [teamOneSearchValue, setTeamOneSearchValue] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -28,47 +30,8 @@ export default function PlayerSelect({ initialSleeperPlayerData, user, week, cap
     dedupingInterval: 0,
   });
 
-  useEffect(() => {
-    console.log('swrData updated:', swrData);
-    if (swrData) {
-      setCaptainDataState(swrData.data);
-    }
-  }, [swrData, setCaptainDataState]);
-
-  const handleUpdateTable = useCallback(async () => {
-    setIsUpdating(true);
-    try {
-      const updatedData = await fetcher(`/api/users/currentWeek?t=${Date.now()}`);
-      setCaptainDataState(updatedData.data);
-      setTableKey(prev => prev + 1);
-      console.log("Table data updated successfully");
-    } catch (error) {
-      console.error("Error updating table:", error);
-      setError("Failed to update table. Please try again.");
-    } finally {
-      setIsUpdating(false);
-    }
-  }, [fetcher, setCaptainDataState]);
-
   const latestCaptainData = swrData?.data || [];
-  console.log('Rendering with latestCaptainData:', latestCaptainData);
-
-  const handleSearch = (e) => {
-    setTeamOneSearchValue(e.target.value);
-    setShowDropdown(true);
-  };
-
-  const filteredPlayers = initialSleeperPlayerData ? initialSleeperPlayerData.filter((player) =>
-    player.full_name.toLowerCase().includes(teamOneSearchValue.toLowerCase())
-  ) : [];
-
-  console.log('Filtered players:', filteredPlayers.length);
-
-  const onSearch = (searchTerm, user) => {
-    console.log("Search term:", searchTerm);
-    console.log("User:", user);
-    // Implement your search logic here
-  };
+  console.log('Rendering with latestCaptainData:', latestCaptainData.length);
 
   return (
     <div>
@@ -82,27 +45,13 @@ export default function PlayerSelect({ initialSleeperPlayerData, user, week, cap
         <input
           type="text"
           value={teamOneSearchValue}
-          onChange={handleSearch}
+          onChange={(e) => {
+            setTeamOneSearchValue(e.target.value);
+            setShowDropdown(true);
+          }}
           placeholder="Search for a player"
           className="w-full p-2 border rounded text-black"
         />
-        {showDropdown && filteredPlayers.length > 0 && (
-          <ul className="absolute z-10 w-full bg-white border rounded mt-1 max-h-60 overflow-auto">
-            {filteredPlayers.map((player) => (
-              <li
-                key={player.player_id}
-                onClick={() => {
-                  onSearch(player.full_name, user);
-                  setShowDropdown(false);
-                  setTeamOneSearchValue("");
-                }}
-                className="p-2 hover:bg-gray-100 cursor-pointer text-black"
-              >
-                {player.full_name}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
 
       {/* Update Table button */}

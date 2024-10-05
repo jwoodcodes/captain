@@ -1,4 +1,4 @@
-import PlayerSelectWrapper from '../components/playerSelectWrapper';
+import PlayerSelectWrapper from './components/playerSelectWrapper';
 
 async function getData() {
   // Fetch your initial data here

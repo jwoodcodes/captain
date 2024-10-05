@@ -1,11 +1,13 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import useSWR from 'swr';
 
 export default function PlayerSelect({ initialSleeperPlayerData, user, week, captainData, setCaptainDataState }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
   const [tableKey, setTableKey] = useState(0);
+  const [teamOneSearchValue, setTeamOneSearchValue] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const fetcher = async (url) => {
     const res = await fetch(url);
@@ -37,6 +39,7 @@ export default function PlayerSelect({ initialSleeperPlayerData, user, week, cap
 
   // Use swrData.data as the latest captain data
   const latestCaptainData = swrData?.data || [];
+  console.log('latestCaptainData:', latestCaptainData);
 
   return (
     <div>

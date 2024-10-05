@@ -1,10 +1,10 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import oCaptainLeagueDataArray from "../data/oCaptainLeagueDataArray";
 import styles from "../styles/extraStyles.module.css";
 import kickoffTimes from "../data/kickoffTimes";
 
-export default function PlayerSelect({
+const PlayerSelect = memo(function PlayerSelect({
   initialSleeperPlayerData,
   user,
   week,
@@ -26,35 +26,20 @@ export default function PlayerSelect({
   );
 
   const fetchLatestCaptainData = useCallback(async () => {
-    const timestamp = new Date().getTime();
-    console.log(`Fetching data at ${timestamp}`);
     try {
-      const response = await fetch(`/api/users/currentWeek?t=${timestamp}`, {
-        cache: 'no-store',
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        },
-      });
-      
+      const timestamp = new Date().getTime();
+      const response = await fetch(`/api/users/currentWeek?t=${timestamp}`);
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', response.status, response.statusText);
-        console.error('Error details:', errorText);
-        throw new Error(`Failed to fetch latest captain data: ${response.status} ${response.statusText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
       const responseData = await response.json();
-      console.log("Fetched latest captain data:", responseData);
-      setLatestCaptainData(responseData.data);
+      console.log("Fetched data:", responseData);
+      setLatestCaptainData(responseData.data); // Make sure we're setting the data array, not the whole response
       setCaptainDataState(responseData.data);
-      setTableKey(prevKey => prevKey + 1);
-      setError(null);
+      setTableKey(prevKey => prevKey + 1); // Force re-render
     } catch (error) {
-      console.error("Error in fetchLatestCaptainData:", error);
-      setError("Failed to fetch data. Please try again later.");
-      throw error; // Re-throw the error so it can be caught in handleUpdateTable
+      console.error("Error fetching data:", error);
+      setError("Failed to fetch data. Please try again.");
     }
   }, [setCaptainDataState]);
 
@@ -198,7 +183,6 @@ export default function PlayerSelect({
       console.log("Table data updated successfully");
     } catch (error) {
       console.error("Error updating table:", error);
-      setError("Failed to update table. Please try again.");
     } finally {
       setIsUpdating(false);
     }
@@ -291,8 +275,8 @@ export default function PlayerSelect({
       
       {error && <p className="error text-red-500">{error}</p>}
       
-      {!error && user && Array.isArray(latestCaptainData) && latestCaptainData.length > 0 ? (
-        <div className="mt-8" key={tableKey}>
+      {!error && latestCaptainData && latestCaptainData.length > 0 ? (
+        <div key={tableKey} className="mt-8">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-blue-600 text-white">
@@ -304,13 +288,9 @@ export default function PlayerSelect({
             <tbody>
               {latestCaptainData.map((data) => {
                 let weekToUse = data[`week${week}`];
-                console.log(`Data for ${data.username}:`, weekToUse);
-                let displayUsername = data.username;
-                if (data.username === "Kurtgoss") displayUsername = "Kurt";
-                if (data.username === "sethmccurley") displayUsername = "Chef Bezos";
                 return (
                   <tr key={data.username} className="text-white">
-                    <td>{displayUsername}</td>
+                    <td>{data.username}</td>
                     <td>{weekToUse?.player || "Not set"}</td>
                     <td>{weekToUse?.position || "Not set"}</td>
                   </tr>
@@ -324,4 +304,6 @@ export default function PlayerSelect({
       )}
     </div>
   );
-}
+});
+
+export default PlayerSelect;

@@ -13,6 +13,7 @@ export default function PlayerSelect({ initialSleeperPlayerData, user, week, cap
   const [teamOneSearchValue, setTeamOneSearchValue] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const fetcher = useCallback(async (url) => {
     console.log('Fetching data from:', url);
@@ -33,11 +34,13 @@ export default function PlayerSelect({ initialSleeperPlayerData, user, week, cap
 
   const handleUpdateTable = async () => {
     setIsUpdating(true);
+    setErrorMessage(null);
     try {
       await mutate();
       console.log("Table data updated successfully");
     } catch (error) {
       console.error("Error updating table:", error);
+      setErrorMessage("Failed to update table. Please try again.");
     } finally {
       setIsUpdating(false);
     }
@@ -79,8 +82,13 @@ export default function PlayerSelect({ initialSleeperPlayerData, user, week, cap
         </button>
       </div>
       
-      {error && <p className="error text-red-500">{error}</p>}
-      
+      {/* Error message */}
+      {(errorMessage || swrError) && (
+        <p className="text-red-500 text-center mb-4">
+          {errorMessage || "An error occurred while fetching data."}
+        </p>
+      )}
+
       {!error && latestCaptainData && latestCaptainData.length > 0 ? (
         <div key={tableKey} className="mt-8">
           <table className="w-full border-collapse">

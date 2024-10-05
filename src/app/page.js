@@ -1,5 +1,5 @@
 import PlayerSelectWrapper from './components/playerSelectWrapper';
-
+import { handleUpdateTable } from './components/ClientPlayerSelect';
 async function getData() {
   // Fetch your initial data here
   // This is just an example, replace with your actual data fetching logic

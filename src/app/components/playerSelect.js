@@ -12,6 +12,7 @@ export default function PlayerSelect({ initialSleeperPlayerData, user, week, cap
 
   const [teamOneSearchValue, setTeamOneSearchValue] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const fetcher = useCallback(async (url) => {
     console.log('Fetching data from:', url);
@@ -24,11 +25,23 @@ export default function PlayerSelect({ initialSleeperPlayerData, user, week, cap
     return data;
   }, []);
 
-  const { data: swrData, error: swrError } = useSWR(`/api/users/currentWeek`, fetcher, {
+  const { data: swrData, error: swrError, mutate } = useSWR(`/api/users/currentWeek`, fetcher, {
     refreshInterval: 0,
     revalidateOnFocus: false,
     dedupingInterval: 0,
   });
+
+  const handleUpdateTable = async () => {
+    setIsUpdating(true);
+    try {
+      await mutate();
+      console.log("Table data updated successfully");
+    } catch (error) {
+      console.error("Error updating table:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const latestCaptainData = swrData?.data || [];
   console.log('Rendering with latestCaptainData:', latestCaptainData.length);

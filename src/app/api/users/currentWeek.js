@@ -1,17 +1,10 @@
 import { NextResponse } from "next/server";
 import { MongoClient } from "mongodb";
 
-// const url = process.env.MONGODB_URI;
-const url = "mongodb+srv://devJay:Hesstrucksarethebest@dailydynasties.syom4sb.mongodb.net/test";
+const url = process.env.MONGODB_URI;
 
 export async function GET() {
   console.log("GET request received for /api/users/currentWeek");
-  
-  if (!url) {
-    console.error("MONGODB_URI is not defined in the environment variables");
-    return NextResponse.json({ error: "Database configuration error" }, { status: 500 });
-  }
-
   const client = new MongoClient(url);
 
   try {
@@ -40,4 +33,3 @@ export async function GET() {
     await client.close();
   }
 }
-

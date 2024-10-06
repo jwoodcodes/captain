@@ -45,16 +45,21 @@ export default function PlayerSelect({
       
       const responseData = await response.json();
       console.log("Fetched latest captain data:", responseData);
-      setLatestCaptainData(responseData.data); // Set only the 'data' part of the response
+
+      if (!responseData.data || !Array.isArray(responseData.data)) {
+        throw new Error('Invalid data format received');
+      }
+      setLatestCaptainData(responseData.data);
+
       setCaptainDataState(responseData.data);
       setTableKey(prevKey => prevKey + 1); // Force table re-render
       setError(null);
     } catch (error) {
       console.error("Error in fetchLatestCaptainData:", error);
-      setError("Failed to fetch data. Please try again later.");
-      throw error;
-    } finally {
-      setIsUpdating(false);
+
+      setError(`Failed to fetch data: ${error.message}`);
+      setLatestCaptainData([]);
+
     }
   }, [setCaptainDataState]);
 
@@ -191,7 +196,20 @@ export default function PlayerSelect({
   }
 
   const handleUpdateTable = async () => {
-    await fetchLatestCaptainData();
+
+    console.log("Update button clicked");
+    setIsUpdating(true);
+    setError(null);
+    try {
+      await fetchLatestCaptainData();
+      console.log("Table data updated successfully");
+    } catch (error) {
+      console.error("Error updating table:", error);
+      setError(`Failed to update table: ${error.message}`);
+    } finally {
+      setIsUpdating(false);
+    }
+
   };
 
   console.log('Rendering PlayerSelect component');
@@ -264,8 +282,8 @@ export default function PlayerSelect({
       )}
       {showPopover && <div className={styles.popover}>{popoverMessage}</div>}
 
-      {isLoading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
+      {isLoading && <p className="text-white">Loading...</p>}
+      {error && <p className="text-red-500 mb-4">Error: {error}</p>}
       <h2 className="text-xl text-white text-center font-bold mb-4">
         Week {week} captain selections
       </h2>
@@ -278,8 +296,6 @@ export default function PlayerSelect({
           {isUpdating ? 'Updating...' : 'Update Table'}
         </button>
       </div>
-      
-      {error && <p className="error text-red-500">{error}</p>}
       
       {!error && user && Array.isArray(latestCaptainData) && latestCaptainData.length > 0 ? (
         <div className="mt-8" key={tableKey}>
@@ -310,7 +326,9 @@ export default function PlayerSelect({
           </table>
         </div>
       ) : (
-        <p className="text-white">No data available to display.</p>
+        <p className="text-white">
+          {error ? 'Error loading data. Please try updating again.' : 'No data available to display.'}
+        </p>
       )}
     </div>
   );

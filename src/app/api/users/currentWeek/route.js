@@ -23,16 +23,16 @@ export async function GET() {
     const captainDocs = await col.find({}).toArray();
     console.log(`Fetched ${captainDocs.length} documents`);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       timestamp: new Date().toISOString(),
       data: captainDocs
-    }, { 
-      headers: {
-        'Cache-Control': 'no-store, max-age=0',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
     });
+
+    // Set cache control headers
+    response.headers.set('Cache-Control', 'no-store, max-age=0');
+    response.headers.set('Pragma', 'no-cache');
+
+    return response;
   } catch (err) {
     console.error("Error fetching captain data:", err);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -40,4 +40,5 @@ export async function GET() {
     await client.close();
   }
 }
+
 

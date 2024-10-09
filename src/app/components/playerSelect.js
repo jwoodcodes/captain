@@ -26,40 +26,38 @@ export default function PlayerSelect({
   );
 
   const fetchLatestCaptainData = useCallback(async () => {
-    setIsUpdating(true);
+    const timestamp = new Date().getTime();
+    console.log(`Fetching data at ${timestamp}`);
     try {
-      const timestamp = new Date().getTime();
-      console.log(`Attempting to fetch data from: /api/users/currentWeek?t=${timestamp}`);
       const response = await fetch(`/api/users/currentWeek?t=${timestamp}`, {
         cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
       });
       
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error response:', response.status, response.statusText);
         console.error('Error details:', errorText);
-        throw new Error(
-          `Failed to fetch latest captain data: ${response.status} ${response.statusText}`
-        );
+        throw new Error(`Failed to fetch latest captain data: ${response.status} ${response.statusText}`);
       }
       
       const responseData = await response.json();
       console.log("Fetched latest captain data:", responseData);
-
       if (!responseData.data || !Array.isArray(responseData.data)) {
         throw new Error('Invalid data format received');
       }
       setLatestCaptainData(responseData.data);
-
       setCaptainDataState(responseData.data);
-      setTableKey(prevKey => prevKey + 1); // Force table re-render
+      setTableKey(prevKey => prevKey + 1);
       setError(null);
     } catch (error) {
       console.error("Error in fetchLatestCaptainData:", error);
-
       setError(`Failed to fetch data: ${error.message}`);
       setLatestCaptainData([]);
-
     }
   }, [setCaptainDataState]);
 
@@ -87,7 +85,7 @@ export default function PlayerSelect({
 
   async function onSearch(searchTerm, user) {
     console.log("Search term:", searchTerm);
-    console.log("User:", user);
+    // console.log("User:", user);
 
     // Check if the user is logged in
     if (!user || !user.username) {
@@ -104,7 +102,7 @@ export default function PlayerSelect({
       (p) => p.name.toLowerCase() === searchTerm.toLowerCase()
     );
 
-    // console.log("Found player:", player);
+    console.log("Found player:", player);
 
     if (player) {
       function compareDateAndTime(targetDate, targetTime) {
@@ -196,7 +194,6 @@ export default function PlayerSelect({
   }
 
   const handleUpdateTable = async () => {
-
     console.log("Update button clicked");
     setIsUpdating(true);
     setError(null);
@@ -209,13 +206,12 @@ export default function PlayerSelect({
     } finally {
       setIsUpdating(false);
     }
-
   };
 
   console.log('Rendering PlayerSelect component');
   console.log('user:', user);
   console.log('latestCaptainData:', latestCaptainData);
-  
+  console.log('error:', error);
 
   return (
     <div>

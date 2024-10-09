@@ -1,79 +1,79 @@
 const kickoffTimes = [
   {
     team: "ARI",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "15:05",
+    kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "ATL",
-    date: "10-03-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "19:15",
+    kick: "15:25",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "BAL",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "BUF",
-    date: "10-06-2024",
+    date: "10-14-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "12:00",
+    kick: "19:15",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "CAR",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "12:00",
+    kick: "15:25",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "CHI",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "12:00",
+    kick: "08:30",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "CIN",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "12:00",
+    kick: "19:20",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "CLE",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "DAL",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "19:20",
+    kick: "15:25",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "DEN",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "15:05",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "DET",
-    date: "09-30-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "19:15",
+    kick: "15:25",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
@@ -85,23 +85,23 @@ const kickoffTimes = [
   },
   {
     team: "HOU",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "IND",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "JAC",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "12:00",
+    kick: "08:30",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
@@ -113,16 +113,16 @@ const kickoffTimes = [
   },
   {
     team: "LV",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "15:05",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "LAC",
-    date: "09-29-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "15:25",
+    kick: "15:05",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
@@ -148,23 +148,23 @@ const kickoffTimes = [
   },
   {
     team: "NE",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "NO",
-    date: "10-07-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "19:15",
+    kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "NYG",
-    date: "10-06-2024",
+    date: "10-14-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "15:25",
+    kick: "19:15",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
@@ -176,49 +176,49 @@ const kickoffTimes = [
   },
   {
     team: "PHI",
-    date: "09-29-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "PIT",
-    date: "10-06-2024",
-    // the above is in the format of "MM-DD-YYYY"
-    kick: "19:20",
-    //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
-  },
-  {
-    team: "SF",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "15:05",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
-    team: "SEA",
-    date: "10-06-2024",
+    team: "SF",
+    date: "10-10-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "15:25",
+    kick: "19:15",
+    //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
+  },
+  {
+    team: "SEA",
+    date: "10-10-2024",
+    // the above is in the format of "MM-DD-YYYY"
+    kick: "19:15",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "TB",
-    date: "10-03-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "19:20",
+    kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "TEN",
-    date: "09-30-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
-    kick: "18:90",
+    kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },
   {
     team: "WAS",
-    date: "10-06-2024",
+    date: "10-13-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)

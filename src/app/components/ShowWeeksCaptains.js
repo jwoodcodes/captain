@@ -23,7 +23,7 @@ const ShowWeeksCaptains = () => {
     fetchUsersData();
   }, []);
 
-  // Rest of your component code...
+ 
 };
 
 export default ShowWeeksCaptains;

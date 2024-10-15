@@ -113,7 +113,7 @@ const kickoffTimes = [
   },
   {
     team: "LV",
-    date: "10-13-2024",
+    date: "10-20-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "15:05",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
@@ -204,7 +204,7 @@ const kickoffTimes = [
   },
   {
     team: "TB",
-    date: "10-13-2024",
+    date: "10-20-2024",
     // the above is in the format of "MM-DD-YYYY"
     kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)

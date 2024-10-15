@@ -9,7 +9,7 @@ const kickoffTimes = [
   {
     team: "ATL",
     date: "10-20-2024",
-    // the above is in the format of "MM-DD-YYYY"
+    
     kick: "12:00",
     //the above is (in 24-hour format, e.g., "14:30" for 2:30 PM)
   },

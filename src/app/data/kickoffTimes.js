@@ -211,7 +211,7 @@ const kickoffTimes = [
   {
     team: "TEN",
     date: "11-06-2024",
-    // the above is in the format of "MM-DD-YYYY"
+   
     kick: "12:00",
   },
   {
